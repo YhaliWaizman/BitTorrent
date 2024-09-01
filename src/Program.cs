@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Collections.Generic;
 
+
 // Parse arguments
 var (command, param) = args.Length switch
 {
@@ -36,8 +37,9 @@ else if (command == "info")
     {
         throw new InvalidOperationException("The 'announce' key is missing.");
     }
-
-    Console.WriteLine($"Tracker URL: {announceValue}\nLength: {info["length"]}");
+    string hashedInfo = Hash.encryptHash(Bencode.Encode(info));
+    List<string> pieceList = Hash.listHashes(info);
+    Console.WriteLine($"Tracker URL: {announceValue}\nLength: {info["length"]}\nInfo Hash: {hashedInfo}\nPiece Length: {info["piece length"]}\n Pieces: {String.Join("\n", pieceList)}");
 }
 else
 {
