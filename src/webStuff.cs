@@ -41,4 +41,15 @@ public class Web
         }
         return sb.ToString();
     }
+
+    public static string UrlEncodeInfoHashString(string infoHash)
+    {
+        byte[] infoHashBytes = Encoding.UTF8.GetBytes(infoHash);
+        StringBuilder sb = new();
+        foreach (byte b in infoHashBytes)
+        {
+            sb.Append($"%{b:X2}");
+        }
+        return sb.ToString();
+    }
 }

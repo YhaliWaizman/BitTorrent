@@ -15,7 +15,11 @@ public class Hash
     // Compute SHA-1 hash of the input string and return the raw byte array
     public static byte[] EncryptHash(string input)
     {
-        return SHA1.HashData(Encoding.UTF8.GetBytes(input));
+        return SHA1.HashData(Encoding.Unicode.GetBytes(input));
+    }
+    public static byte[] StringToBytes(string input)
+    {
+        return Encoding.ASCII.GetBytes(input);
     }
 
     // Convert a pieces string into a list of hexadecimal hashes

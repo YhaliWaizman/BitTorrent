@@ -5,10 +5,10 @@ using System.Net;
 
 static Dictionary<string, object>? getDecodedFile(string param)
 {
-    string fileContent;
+    byte[] fileContent;
     try
     {
-        fileContent = File.ReadAllText(param);
+        fileContent = File.ReadAllBytes(param); // Read the file as a byte array
     }
     catch (IOException ex)
     {
@@ -20,6 +20,7 @@ static Dictionary<string, object>? getDecodedFile(string param)
                       ?? throw new InvalidOperationException("Decoded file is not a dictionary.");
     return decodedFile;
 }
+
 
 static List<string> parsePeers(byte[] peersData)
 {
@@ -54,7 +55,7 @@ var (command, param) = args.Length switch
 if (command == "decode")
 {
     var encodedValue = param;
-    var decodedObject = Bencode.Decode(encodedValue);
+    var decodedObject = Bencode.Decode(Encoding.UTF8.GetBytes(encodedValue));
     Console.WriteLine(JsonSerializer.Serialize(decodedObject));
 }
 else if (command == "info")
@@ -89,6 +90,10 @@ else if (command == "peers")
     }
 
     byte[] infoHash = Hash.EncryptHash(Bencode.Encode(info));
+    foreach (KeyValuePair<string, object> kvp in info)
+    {
+        Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+    }
     string peerId = "00112233445566778899";
     int port = 6881;
     int uploaded = 0;
@@ -115,7 +120,7 @@ else if (command == "peers")
         return;
     }
 
-    var response = Bencode.Decode(responseBody) as Dictionary<string, object>
+    var response = Bencode.Decode(Encoding.UTF8.GetBytes(responseBody)) as Dictionary<string, object>
                    ?? throw new InvalidOperationException("Tracker response is not a dictionary.");
     
     foreach (KeyValuePair<string, object> kvp in response)
